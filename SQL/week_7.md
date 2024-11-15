@@ -87,7 +87,13 @@ FROM
 WHERE~
 ```
 
+![alt text](<../image/7주차/with문 예시.png>)
+
+
+
 ## PARTITION
+
+![alt text](../image/7주차/파티션.png)
 
 table엔 partition이란 것이 존재할 수 있음.
 
@@ -98,3 +104,39 @@ ex) 특정시기에 들어온 물건을 찾고 싶을 때, table의 partition이
 
 - 데이터 관리 용이성
     특정 일자의 데이터를 모두 변경하거나 삭제해야하는 경우, 파티션이 있따면 쉽게 설정하거나 삭제할 수 있음. 
+
+
+**새탭에서 열기를 눌렀을 때**
+
+![alt text](<../image/7주차/파티션 실행 화면.png>)
+
+- 데이터의 범위를 조정하고 싶다면, 초록색의 날짜 데이터를 조정하면 됨
+
+- 조정하면 오른쪽 상단 부분에 데이터의 크기가 표시됨 -> 얼만큼 데이터가 줄어드는지 늘어나는지를 확인할 수 있음.
+
+- DATETIME_ADD : `날짜, INTERVAL n day` : 날짜 + n일
+
+```
+SELECT  
+  id,
+  player1_id,
+  player2_id  --- 가져올 컬럼을 설정할 때마다 처리하는 데이터 크기가 달라지는 것을 볼 수 있음
+FROM `dart-b-study-bigquery.basic.battle` 
+WHERE battle_datetime BETWEEN DATETIME("2022-11-16") AND DATETIME_ADD("2024-11-16", INTERVAL 1 DAY) LIMIT 1000
+--- 파티션이 필수인 곳은 where조건문에서 파티션 필터를 걸지 않으면 오류가 발생함.
+```
+
+# 6-4. 데이터 결과 검증
+## 데이터 결과 검증(data result validation)
+
+**: SQL쿼리 후 얻은 결과가 예상과 일치하는지 확인하는 과정**
+
+방법>
+
+1. 내가 기대하는 예상 결과를 정의
+2. 쿼리 작성
+3. 두개가 일치하는가를 비교
+
+❗❗>
+- 문제를 잘 정의할 것
+- 도메인 특수성, 규칙 등 잘 파악하기
