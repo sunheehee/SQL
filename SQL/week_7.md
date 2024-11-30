@@ -170,3 +170,24 @@ WHERE battle_datetime BETWEEN DATETIME("2022-11-16") AND DATETIME_ADD("2024-11-1
 - JOIN : 우측에 붙인다
 
 # 6-5. 데이터 결과 검증 예시
+
+1) 전체 테이블 파악
+2) 한 명의 특정 트레이너가 승리한 비율 구하기
+    - 참여한 배틀의 수 / 승리한 배틀의 수
+    - 예상 정답세우기 ex) player_id가 7이 승리한 비율은 0.55556이다
+
+3) 쿼리 작성
+
+- 통합 데이터 만들기 (UNION 활용)
+
+![alt text](<../image/7주차/6-5 예시.png>)
+
+5) 실제와 비교
+
+![alt text](../image/7주차/결과검증.png)
+
+
+6) 맞다면 특정 유저 조건 제외
+
+![alt text](../image/7주차/결과검증2.png)
+
