@@ -310,3 +310,63 @@ LIMIT 1
 
 ##  문제7.
 각 트레이너가 가진 포켓몬 중에서 공격력(attack)이 100이상인 포켓몬과 100미만인 포켓몬의 수를 각각 계산해주세요. 트레이너의 이름과 두 조건에 해당하는 포켓몬의 수를 출력해주세요.
+
+**👾-- 공격력이 100이상, 100미만인 것은 조건(where)인 것 같지만
+열수준으로 합쳐야하는 것이기 때문에 COUNTIF를 사용함**
+
+```
+WITH not_released as (
+  SELECT
+      *
+  FROM basic.trainer_pokemon as tp
+  WHERE status != "Released"
+),
+
+trainer_high_and_low_attack_cnt AS (
+  SELECT
+    nr.trainer_id,
+    countif(p.attack >= 100 ) as high_attack_cnt,
+    countif(p.attack <= 100 ) as low_attack_cnt
+    
+  FROM not_released as nr
+  LEFT JOIN basic.pokemon as p
+  ON nr.pokemon_id = p.id
+  GROUP BY
+    nr.trainer_id
+)
+
+SELECT
+ t.name,
+ cnt.*
+FROM trainer_high_and_low_attack_cnt as cnt
+LEFT JOIN basic.trainer as t
+ON cnt.trainer_id = t.id
+```
+
+### 쿼리 결과
+
+![alt text](<../image/8주차/문제7 쿼리 결과.png>)
+
+```
+맞게 집계된 것인지 확인하는 쿼리문
+
+SELECT
+  nr.trainer_id,
+  nr.pokemon_id,
+  p.attack
+FROM not_released as nr
+LEFT JOIN basic.pokemon AS p
+ON nr.pokemon_id = p.id
+Where 
+  trainer_id = 5
+
+```
+👾위의 쿼리를 시행한 후 결과를 보고 id하나를 골라서 where조건식에 적용해보는 코드임
+
+# 강의 수강 완료 인증샷
+
+![alt text](<../image/8주차/강의 수강완료 인증샷.png>)
+
+
+
+![alt text](../image/8주차/헤ㅔㅎ.png)
