@@ -245,3 +245,23 @@ for update in FROM clause"`
 👩🏻‍🏫같은 테이블을 서브쿼리에서 조회하면서 동시에 수정(`UPDATE`,`DELETE` 할 수 없다.)
 
 ➡️ CTE, DERIVED TABLE을 사용해서 해결할 수 있다. 
+
+---
+
+# CTE(Common Table Expression)
+> 하나의 SQL문 내에서만 존재하는 이름이 지정된 임시 결과 집합 
+
+## with절
+- with 절에는 하나 이상의 쉼표로 구분된 서브쿼리가 포함된다. 
+- 각 서브쿼리는 결과 집합을 생성하며, 특정 이름과 연결된다.
+
+🌱**CTE 예제**
+```
+WITH
+    CTE1 AS (SELECT A,B FROM T1),
+    CTE2 AS (SELECT C,D FRP, T2)
+
+SELECT B,D FROM CTE1 JOIN CTE2
+WHERE CTE1.A = CTE2.C
+```
+- `CTE1`, `CTE2`는 CTE로 정의된 **임시 결과 집합**이다.
