@@ -2,7 +2,7 @@
 > SELECT 명령문 내의 명령문
 
 🫧**서브 쿼리 예시**
-```
+```mysql
 SELECT * FROM t1 WHERE column1 = (SELECT column1 FROM t2)
 ```
 - `SELECT * ~ WHERE column1` : 외부 쿼리
@@ -24,14 +24,14 @@ SELECT * FROM t1 WHERE column1 = (SELECT column1 FROM t2)
 ```
 
 🌱**서브쿼리를 사용한 비교문 예제**
-```
+```mysql
 SELECT * FROM t1 
 WHERE column1 = (SELECT MAX(column2) FROM t2);
 ```
 - t2테이블 중 가장 큰 값과 동일한 값을 t1테이블의 column1에서 찾아 반환하는 코드(JOIN에서는 불가함함)
 
 
-```
+```mysql
 SELECT * FROM t1 AS t
 WHERE 2 = (SELECT COUNT(*) FROM t1 WHERE ti.id =t.id)
 ```
@@ -50,7 +50,7 @@ ANY, IN, SOME을 사용할 때의 비교 연산자
 
 #### ANY
 > 서브 쿼리에서 **반환되는 값 중 하나라도** TRUE를 반환하면 TRUE를 반환한다.
-```
+```mysql
 SELECT s1 FROM t1 WHERE s1 > ANY(SELECT s1 FROM t2);
 ```
 : t1테이블의 s1의 값이 t2테이블의 s1값 보다 하나라도 큰 s1을 조회
@@ -61,7 +61,7 @@ t2테이블의 s1 = 10, 20 이거나, t2 테이블이 비어있다면 False를 �
 ❗t2테이블이 NULL을 포함하고 있으면 NULL을 반환한다.
 
 ❗서브쿼리에서의 IN은 ANY와 같은 작업을 한다.(하지만 동일하진 않다. ** ANY는 리스트를 가져올 수 없음.)
-```
+```mysql
 SELECT s1 FROM t1 WHERE s1 = ANY(SELECT s1 FROM t2)
 
 SELECT s1 FROM t1 WHERE s1 IN (SELECT s1 FROM t2)
@@ -81,7 +81,7 @@ SELECT s1 FROM t1 WHERE s1 IN (SELECT s1 FROM t2)
 ## ALL을 포함한 하위쿼리
 > 서브쿼리가 반환하는 열의 값을 **모두 만족**하는 경우에만 TRUE를 반환함
 
-```
+```mysql
 SELECT s1 FROM t1 WHERE s1 > ALL (SELECT s1 FROM t2);
 ```
 
@@ -93,12 +93,12 @@ SELECT s1 FROM t1 WHERE s1 > ALL (SELECT s1 FROM t2);
 
 
 ⚠️**주의**⚠️
-```
+```mysql
 SELECT * FROM t1 WHERE 1 > ALL (SELECT s1 FROM t2);
 ```
 ➡️ t2가 빈 테이블이어도 TRUE
 
-```
+```mysql
 SELECT * FROM t1 WHERE 1 > (SELECT s1 FROM t2);
 ```
 ➡️ 이 경우는 t2가 빈 테이블이면 NULL
@@ -131,7 +131,7 @@ SELECT * FROM t1 WHERE 1 > (SELECT s1 FROM t2);
 🌱 **EXISTS, NOT EXISTS 사용 예시**
 
 1. **하나 이상의 도시에 존재하는** 상점 찾기
-```
+```mysql
 SELECT DISTINCT STORE_TYPE FROM STORES
 WHERE EXISTS (
     SELECT * FROM CITIES_STORES 
@@ -139,7 +139,7 @@ WHERE EXISTS (
 ```
 
 2. **어떤 도시에도 존재하지 않는** 상점 유형 찾기
-```
+```mysql
 SELECT DISTINCT STORE_TYPE FROM STORES
 WHERE NOT EXISTS (
     SELECT * FROM CITIES_STORES
@@ -147,7 +147,7 @@ WHERE NOT EXISTS (
 ```
 
 3. **모든 도시에 존재하는** 상점 유형 찾기
-```
+```mysql
 SELECT DISTINCT STORE_TYPE FROM STORES
 WHERE NOT EXISTS
 (SELECT *
@@ -164,11 +164,11 @@ WHERE NOT EXISTS
 ## Subquery와 관련된 오류
 
 ### 1. 지원되지 않는 서브쿼리 문법
-```
+```mysql
 SELECT * FROM t1 WHERE s1 IN (SELECT s2 FROM t2 ORDER BY s1 LIMIT 1);
 ```
 
-```
+```mysql
 ERROR 1235 (ER_NOT_SUPPORTED_YET)
 SQLSTATE = 42000
 Message = "This version of MySQL doesn't yet support
@@ -178,10 +178,10 @@ Message = "This version of MySQL doesn't yet support
 👩🏻‍🏫 IN, ALL, ANY, SOME 서브쿼리에서 ORDER BY 및 LIMIT을 사용할 수 없다. 
 
 ### 2. 서브쿼리에서 반환하는 **컬럼 개수**가 잘못된 경우
-```
+```mysql
 SELECT (SELECT column1, column2 FROM t2) FROM t1;
 ```
-```
+```mysql
 ERROR 1241 (ER_OPERAND_COL)
 SQLSTATE = 21000
 Message = "Operand should contain 1 column(s)"
@@ -194,22 +194,22 @@ Message = "Operand should contain 1 column(s)"
 #### ⭕**올바른 예제**
 
 #### 2-1. 컬럼을 1개로 변경
-```
+```mysql
 SELECT (SELECT column1 FROM t2) FROM t1;
 ``` 
 
 #### 2-2. 여러 개의 컬럼 비교시 `EXISTS / IN / JOIN` 사용
-```
+```mysql
 # IN 사용
 SELECT * FROM t1 WHERE (column1, column2) IN (SELECT column1, column2 FROM t2);
 ```
-```
+```mysql
 # EXISTS 사용
 SELECT * FROM t1 WHERE EXISTS (
     SELECT * FROM t2 WHERE t1.column1 = t2.column1 AND t1.column2 = t2.column2
 );
 ```
-```
+```mysql
 # JOIN 사용
 SELECT t1.*, t2.column1, t2.column2
 FROM t1
@@ -218,10 +218,10 @@ JOIN t2 ON t1.id = t2.id;
 
 
 ### 3. 서브쿼리에서 **너무 많은 행**을 반환하는 경우
-```
+```mysql
 SELECT * FROM t1 WHERE column1 = (SELECT column1 FROM t2);
 ```
-```
+```mysql
 ERROR 1242 (ER_SUBSELECT_NO_1_ROW)
 SQLSTATE = 21000
 Message = "Subquery returns more than 1 row"
@@ -235,15 +235,15 @@ Message = "Subquery returns more than 1 row"
 #### ⭕**올바른 예제**
 
 서브 쿼리에서 여러 개의 행을 반환할 가능성이 있다면 ANY 혹은 IN을 사용해서 비교한다. 
-```
+```mysql
 SELECT * FROM t1 WHERE column1 = ANY (SELECT column1 FROM t2);
 ```
 
 ### 4. 서브 쿼리에서 동일한 테이블을 잘못 활용한 경우
-```
+```mysql
 UPDATE t1 SET column2 = (SELECT MAX(column1) FROM t1);
 ```
-```
+```mysql
 ERROR 1093 (ER_UPDATE_TABLE_USED)
 SQLSTATE = HY000
 Message = "You can't specify target table 'x'
@@ -264,7 +264,7 @@ for update in FROM clause"
 - 각 서브쿼리는 결과 집합을 생성하며, 특정 이름과 연결된다.
 
 🌱**CTE 예제**
-```
+```mysql
 WITH
     CTE1 AS (SELECT A,B FROM T1),
     CTE2 AS (SELECT C,D FRP, T2)
