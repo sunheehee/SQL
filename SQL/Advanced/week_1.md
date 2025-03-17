@@ -36,7 +36,8 @@ SELECT * FROM t1 AS t
 WHERE 2 = (SELECT COUNT(*) FROM t1 WHERE ti.id =t.id)
 ```
 - t1테이블에서 2번 작성된 데이터들을 조회
-➡️ 집계가 이루어지는 다른 테이블과의 연결을 원한다면 JOIN이 아닌 서브쿼리를 사용한다.
+
+    ➡️ JOIN에서는 집계가 이루어지는 다른 테이블과의 연결을 할 수 없다.서브쿼리를 사용한다.
 
 -------
 
@@ -95,12 +96,12 @@ SELECT s1 FROM t1 WHERE s1 > ALL (SELECT s1 FROM t2);
 ```
 SELECT * FROM t1 WHERE 1 > ALL (SELECT s1 FROM t2);
 ```
-* t2가 빈 테이블이어도 TRUE
+➡️ t2가 빈 테이블이어도 TRUE
 
 ```
 SELECT * FROM t1 WHERE 1 > (SELECT s1 FROM t2);
 ```
-* 이 경우는 t2가 빈 테이블이면 NULL
+➡️ 이 경우는 t2가 빈 테이블이면 NULL
 
 #### + TABLE 문이란?
 
@@ -167,10 +168,12 @@ WHERE NOT EXISTS
 SELECT * FROM t1 WHERE s1 IN (SELECT s2 FROM t2 ORDER BY s1 LIMIT 1);
 ```
 
-`ERROR 1235 (ER_NOT_SUPPORTED_YET)
+```
+ERROR 1235 (ER_NOT_SUPPORTED_YET)
 SQLSTATE = 42000
 Message = "This version of MySQL doesn't yet support
-'LIMIT & IN/ALL/ANY/SOME subquery'"`
+'LIMIT & IN/ALL/ANY/SOME subquery'"
+```
 
 👩🏻‍🏫 IN, ALL, ANY, SOME 서브쿼리에서 ORDER BY 및 LIMIT을 사용할 수 없다. 
 
@@ -178,22 +181,24 @@ Message = "This version of MySQL doesn't yet support
 ```
 SELECT (SELECT column1, column2 FROM t2) FROM t1;
 ```
-`ERROR 1241 (ER_OPERAND_COL)
+```
+ERROR 1241 (ER_OPERAND_COL)
 SQLSTATE = 21000
-Message = "Operand should contain 1 column(s)"`
+Message = "Operand should contain 1 column(s)"
+```
 
 ❗ 서브쿼리는 기본적으로 하나의 컬럼만 반환한다. 
 
 👩🏻‍🏫 여러 개의 컬럼을 비교하려면 `EXITS` 혹은 `JOIN`을 사용하는 것이 좋다.
 
-⭕**올바른 예제**
+#### ⭕**올바른 예제**
 
-2-1. 컬럼을 1개로 변경
+#### 2-1. 컬럼을 1개로 변경
 ```
 SELECT (SELECT column1 FROM t2) FROM t1;
 ``` 
 
-2-2. 여러 개의 컬럼 비교시 `EXISTS / IN / JOIN` 사용
+#### 2-2. 여러 개의 컬럼 비교시 `EXISTS / IN / JOIN` 사용
 ```
 # IN 사용
 SELECT * FROM t1 WHERE (column1, column2) IN (SELECT column1, column2 FROM t2);
@@ -216,17 +221,18 @@ JOIN t2 ON t1.id = t2.id;
 ```
 SELECT * FROM t1 WHERE column1 = (SELECT column1 FROM t2);
 ```
-
-`ERROR 1242 (ER_SUBSELECT_NO_1_ROW)
+```
+ERROR 1242 (ER_SUBSELECT_NO_1_ROW)
 SQLSTATE = 21000
-Message = "Subquery returns more than 1 row"`
+Message = "Subquery returns more than 1 row"
+```
 
 👩🏻‍🏫 서브쿼리가 최대 한 개의 행만 반환해야하는 경우, 여러 개의 행을 반환하면 오류가 발생한다.
 
 👩🏻‍🏫 `= 연산자`는 단일 행의 값과 비교하기 때문에, 하위 쿼리에서 여러 개의 행을 반환하면 위와 같은 오류가 발생함.
 
 
-⭕**올바른 예제**
+#### ⭕**올바른 예제**
 
 서브 쿼리에서 여러 개의 행을 반환할 가능성이 있다면 ANY 혹은 IN을 사용해서 비교한다. 
 ```
@@ -237,10 +243,12 @@ SELECT * FROM t1 WHERE column1 = ANY (SELECT column1 FROM t2);
 ```
 UPDATE t1 SET column2 = (SELECT MAX(column1) FROM t1);
 ```
-`ERROR 1093 (ER_UPDATE_TABLE_USED)
+```
+ERROR 1093 (ER_UPDATE_TABLE_USED)
 SQLSTATE = HY000
 Message = "You can't specify target table 'x'
-for update in FROM clause"`
+for update in FROM clause"
+```
 
 👩🏻‍🏫같은 테이블을 서브쿼리에서 조회하면서 동시에 수정(`UPDATE`,`DELETE` 할 수 없다.)
 
