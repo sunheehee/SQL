@@ -4,7 +4,7 @@
 식사 금액이 테이블 당 평균 식사 금액보다 더 많은 경우를 모두 출력하는 쿼리를 작성해주세요
 
 ### 작성한 쿼리
-```
+```mysql
 SELECT *
 FROM tips
 WHERE total_bill > (SELECT AVG(total_bill) FROM tips);
@@ -17,7 +17,7 @@ WHERE total_bill > (SELECT AVG(total_bill) FROM tips);
 요일별 매출액 합계를 구하고, 매출이 1500 달러 이상인 요일의 결제 내역을 모두 출력하는 쿼리를 작성해주세요.
 
 ### 작성한 쿼리
-```
+```mysql
 SELECT * 
 FROM tips
 WHERE day IN (SELECT day
@@ -34,7 +34,7 @@ FOOD_PRODUCT 테이블에서 식품분류별로 가격이 제일 비싼 식품�
 
 ### 작성한 쿼리
 ><subquery 버전>
-```
+```mysql
 SELECT CATEGORY, PRICE, PRODUCT_NAME
 FROM FOOD_PRODUCT
 WHERE (CATEGORY, PRICE) IN (SELECT CATEGORY, MAX(PRICE)
@@ -45,7 +45,7 @@ ORDER BY PRICE DESC;
 ```
 
 ><WTIH 버전>
-```
+```mysql
 WITH MAX_PRICE_PRODUCT AS (
         SELECT CATEGORY, MAX(PRICE) AS MAX_PRICE
         FROM FOOD_PRODUCT 
