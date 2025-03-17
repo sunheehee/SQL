@@ -113,11 +113,11 @@ SELECT * FROM t1 WHERE 1 > (SELECT s1 FROM t2);
 
 ❗ 테이블 문을 사용해서 IN, ALL, SOME, NOT IN 등을 간단하게 표현할 수 있다.
 
-⭕ `SELECT * FROM t1 WHERE 1 > ALL (TABLE t2)` 
+    ⭕ `SELECT * FROM t1 WHERE 1 > ALL (TABLE t2)` 
 
 ❗ 하지만 테이블 문에 MAX(), SUM(), AVG()과 같은 집계 함수를 포함하는 서브쿼리에서는 사용할 수 없다.
 
-❌ `SELECT * FROM t1 WHERE 1 > ALL(MAX(TABLE t2))` 
+    ❌ `SELECT * FROM t1 WHERE 1 > ALL(MAX(TABLE t2))` 
 
 ---
 
