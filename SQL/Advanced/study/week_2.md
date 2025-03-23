@@ -43,7 +43,7 @@
 
 ### **window_spec구성요소**
 ```MYSQL
-[window_name] [PARTITION BY ...] [ORDER BY ...] [frame_clause
+[window_name] [PARTITION BY ...] [ORDER BY ...] [frame_clause]
 ```
 `PARTITION BY... `
 - 행들을 부분 그룹으로 나눔
@@ -118,30 +118,191 @@ PERCENT_RANK = (순위-1) / (전체 행 수 - 1)
 
 
 ## 💡예시 쿼리
-![alt text](image/image.png)
 
 ```MYSQL
 SELECT
-  employee,
-  month,
-  sales,
-  FIRST_VALUE(sales) OVER (
-    PARTITION BY employee ORDER BY month
-    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-  ) AS first_sale,
-  LAST_VALUE(sales) OVER (
-    PARTITION BY employee ORDER BY month
-    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-  ) AS last_sale,
-  LAG(sales) OVER (
-    PARTITION BY employee ORDER BY month
-  ) AS prev_sale,
-  LEAD(sales) OVER (
-    PARTITION BY employee ORDER BY month
-  ) AS next_sale
-FROM sales;
+  time, subject, val,
+  FIRST_VALUE(val)  OVER w AS 'first',
+  LAST_VALUE(val)   OVER w AS 'last',
+  NTH_VALUE(val, 2) OVER w AS 'second',
+  NTH_VALUE(val, 4) OVER w AS 'fourth'
+FROM observations
+WINDOW w AS (PARTITION BY subject ORDER BY time
+ ROWS UNBOUNDED PRECEDING);
++----------+---------+------+-------+------+--------+--------+
+| time     | subject | val  | first | last | second | fourth |
++----------+---------+------+-------+------+--------+--------+
+| 07:00:00 | st113   |   10 |    10 |   10 |   NULL |   NULL |
+| 07:15:00 | st113   |    9 |    10 |    9 |      9 |   NULL |
+| 07:30:00 | st113   |   25 |    10 |   25 |      9 |   NULL |
+| 07:45:00 | st113   |   20 |    10 |   20 |      9 |     20 |
+| 07:00:00 | xh458   |    0 |     0 |    0 |   NULL |   NULL |
+| 07:15:00 | xh458   |   10 |     0 |   10 |     10 |   NULL |
+| 07:30:00 | xh458   |    5 |     0 |    5 |     10 |   NULL |
+| 07:45:00 | xh458   |   30 |     0 |   30 |     10 |     30 |
+| 08:00:00 | xh458   |   25 |     0 |   25 |     10 |     30 |
++----------+---------+------+-------+------+--------+--------+
 ```
 
-## FIRST_VALUE
-## LAG 
+### FIRST_VALUE
+> 각 파티션에 첫번째로 입력된 값
+
+### LAST_VALUE
+> 각 파티션에 마지막으로 입력된 값
+
+EX) 
+- subject: st113, 10 입력 → 프레임에 10 ➡️ first_value : 10 & last_value : 10
+- subject: st113, 9 입력 → 프레임에 10, 9 ➡️ fisrt_value : 10 & last_value : 9
+
+💡 만약 파티션별로 마지막에 입력된 값을 보고 싶다면, 프레임설정을 바꿔주면 된다. 
+
+`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRNET NOW`
+
+➡️ `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWIN`
+
+### NTH_VALUE
+> 윈도우 프레임 내에서 N번째 위치의 값을 반환하는 윈도우 함수
+
+## 💡예시 쿼리
+```MYSQL
+SELECT
+  t, val,
+  LAG(val) OVER w AS 'lag',
+  LEAD(val) OVER w AS 'lead',
+  val - LAG(val)  OVER w AS 'lag diff',
+  val - LEAD(val) OVER w AS 'lead diff'
+FROM series
+WINDOW w AS (ORDER BY t);
++----------+------+------+------+----------+-----------+
+| t        | val  | lag  | lead | lag diff | lead diff |
++----------+------+------+------+----------+-----------+
+| 12:00:00 |  100 | NULL |  125 |     NULL |       -25 |
+| 13:00:00 |  125 |  100 |  132 |       25 |        -7 |
+| 14:00:00 |  132 |  125 |  145 |        7 |       -13 |
+| 15:00:00 |  145 |  132 |  140 |       13 |         5 |
+| 16:00:00 |  140 |  145 |  150 |       -5 |       -10 |
+| 17:00:00 |  150 |  140 |  200 |       10 |       -50 |
+| 18:00:00 |  200 |  150 | NULL |       50 |      NULL |
++----------+------+------+------+----------+-----------+
+```
+
+### LAG()
+>지연 - 위쪽 행의 값 가져옴
+- `LAG(val)`: val기준으로 위쪽 행의 값 반환
+- `LAG(val,2,0)`: 2행 위의 값을 가져오고, 없으면 0 반환
+
+### LEAD()
+> 선행 - 아래쪽 행의 값 가져옴
+- `LEAD(val)`: val 기준으로 아래 행 값 반환
+- `LEAD(val,2,0)`: 현재 행에서 2행 아래의 값을 가져오고 없으면 0 반환
+
+
+## 💡예시 쿼리
+```MYSQL
+SELECT
+  val,
+  ROW_NUMBER() OVER w AS 'row_number',
+  NTILE(2) OVER w AS 'ntile2',
+  NTILE(4) OVER w AS 'ntile4'
+FROM numbers
+WINDOW w AS (ORDER BY val);
++------+------------+--------+--------+
+| val  | row_number | ntile2 | ntile4 |
++------+------------+--------+--------+
+|    1 |          1 |      1 |      1 |
+|    1 |          2 |      1 |      1 |
+|    2 |          3 |      1 |      1 |
+|    3 |          4 |      1 |      2 |
+|    3 |          5 |      1 |      2 |
+|    3 |          6 |      2 |      3 |
+|    4 |          7 |      2 |      3 |
+|    4 |          8 |      2 |      4 |
+|    5 |          9 |      2 |      4 |
++------+------------+--------+--------+
+```
+
+### NTILE()
+> 전체 데이터를 N등분해서 각 행이 몇 번째 그룹에 속하는지 반환
+
+```MYSQL
+NTILE(N) OVER (ORDER BY 정렬기준)
+```
+EX)
+- 8개 값을 NTILE(4) → 1,1,2,2,3,3,4,4
+- 8개 값을 NTILE(3) → 1,1,1,2,2,2,3,3
+
+# 14.19.1 윈도우 함수 설명(집계)
+**GROUP BY없이 OVER()절을 사용해 집계함수처럼 사용 가능**
+
+`예시: AVG(score) OVER (PARTITION BY class)`
+
+DISTINCT옵션은 윈도우 함수와 함께 쓸 수 없음
+
+##  데이터 타입 관련 주의사항
+### SUM() & AVG()
+- 정확한 숫자 타입(INT, DECIMAL): DECIMAL로 반환
+- 근사 타입(FLOAT, DOUBLE) : DOUBLE로 반환
+- **<u>시간/날짜 타입**</U>>에는 SUM()과 AVG()를 직접 사용할 수 없고 아래와 같이 변환 후에 사용해야함
+  ```MYSQL
+  SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(time_col))) FROM tbl_name;
+  SELECT FROM_DAYS(SUM(TO_DAYS(date_col))) FROM tbl_name;
+  ```
+
+## 비트함수
+### BIT_AND(), BIT_OR(), BIX_XOR()
+- BINARY, VARBINARY, BLOB같은 바이너리 문자열 처리 가능
+- 반환 타입은 입력값과 같은 타입으로 반환
+- <U>NULL은 무시되지만, 모든 값이 NULL이라면 중립값을 반환한다.</U>
+- 64비트 이상의 결과 가능
+- 인자 길이가 서로 같아야함
+- 511바이트 초과시 오류 발생
+
+### BIT_AND()
+> 모든 행의 값을 비트 AND 연산으로 묶어 하나의 결과로 반환
+
+- 숫자 또는 바이너리 타입으로 입력됨
+- **모든 값이 1인 비트를 기준**으로 AND연산
+
+### BIT_OR()
+> 모든 행의 값을 비트 OR 연산으로 묶어 하나의 결과로 반환
+**비트가 모두 0인 중립값부터 시작**해서 OR로 누적
+
+### BIT_XOR()
+> 모든 행의 값을 비트 XOR연산으로 묶어 하나의 결과로 반환
+- 서로 다르면 1, 같으면 0
+- 비트가 모두 0이면 중립값을 0000...으로 간주
+---
+
+## 집계함수
+### COUNT()
+> **NULL값 포함 X값의 개수를 반환**
+
+EX)
+- 일치하는 행이 없으면 → 0
+- `COUNT(NULL)` → 0
+- `COUNT(*)` → <U>NULL 상관없이</U> 전체 행 수 
+- `COUNT(col)` → <U>NULL이 아닌 값만</U> 카운트
+
+### GROUP_CONCAT()
+> 그룹 내 NULL이 아닌 값들만 문자열로 이어 붙여 하나의 결과로 반환
+
+```MYSQL
+SELECT student_name,
+  GROUP_CONCAT(test_score)
+FROM student
+GROUP BY student_name;
+```       
+
+            OR
+
+```MYSQL
+SELECT student_name,
+  GROUP_CONCAT(DISTINCT test_score
+  ORDER BY test_score DESC SEPARATOR ' ')
+FROM student
+GROUP BY student_name;
+```            
+
+- `SEPARATOR '문자열'`: 구분자지정
+  - `SEPARATOR ''`로 공백 없이 이어붙일 수 있다.
 
