@@ -158,7 +158,7 @@ EX)
 
 `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRNET NOW`
 
-➡️ `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWIN`
+→ `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWIN`
 
 ### NTH_VALUE
 > 윈도우 프레임 내에서 N번째 위치의 값을 반환하는 윈도우 함수
@@ -248,29 +248,6 @@ DISTINCT옵션은 윈도우 함수와 함께 쓸 수 없음
   SELECT FROM_DAYS(SUM(TO_DAYS(date_col))) FROM tbl_name;
   ```
 
-## 비트함수
-### BIT_AND(), BIT_OR(), BIX_XOR()
-- BINARY, VARBINARY, BLOB같은 바이너리 문자열 처리 가능
-- 반환 타입은 입력값과 같은 타입으로 반환
-- <U>NULL은 무시되지만, 모든 값이 NULL이라면 중립값을 반환한다.</U>
-- 64비트 이상의 결과 가능
-- 인자 길이가 서로 같아야함
-- 511바이트 초과시 오류 발생
-
-### BIT_AND()
-> 모든 행의 값을 비트 AND 연산으로 묶어 하나의 결과로 반환
-
-- 숫자 또는 바이너리 타입으로 입력됨
-- **모든 값이 1인 비트를 기준**으로 AND연산
-
-### BIT_OR()
-> 모든 행의 값을 비트 OR 연산으로 묶어 하나의 결과로 반환
-**비트가 모두 0인 중립값부터 시작**해서 OR로 누적
-
-### BIT_XOR()
-> 모든 행의 값을 비트 XOR연산으로 묶어 하나의 결과로 반환
-- 서로 다르면 1, 같으면 0
-- 비트가 모두 0이면 중립값을 0000...으로 간주
 ---
 
 ## 집계함수
@@ -293,7 +270,7 @@ FROM student
 GROUP BY student_name;
 ```       
 
-            OR
+   OR
 
 ```MYSQL
 SELECT student_name,
@@ -306,3 +283,26 @@ GROUP BY student_name;
 - `SEPARATOR '문자열'`: 구분자지정
   - `SEPARATOR ''`로 공백 없이 이어붙일 수 있다.
 
+---
+
+**💡예시 테이블**
+```MYSQL
+SELECT
+  student_name,
+  subject,
+  score,
+  MAX(score) OVER (PARTITION BY student_name) AS max_score
+FROM scores;
+```
+![alt text](image/image2-3.png)
+
+### MAX(), MIN() OVER
+
+> 학생별 최대/최소 점수를 모든 행마다 표시
+
+![alt text](MAX_OVER결과.png)
+
+### SUM() OVER
+> 학생별 모든 과목 점수 합계를 모든 행마다 표시
+
+![alt text](SUM_OVER결과.png)
