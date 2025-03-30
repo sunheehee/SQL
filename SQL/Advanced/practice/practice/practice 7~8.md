@@ -56,7 +56,7 @@ GRADE가 존재하는 개발자의 GRADE, ID, EMAIL을 조회하는 SQL 문을 �
 
 ### 내가 작성한 쿼리
 
-```
+```MYSQL
 WITH GRADE_TABLE AS (
     SELECT 
     CASE WHEN SKILL_CODE & (SELECT SUM(CODE) FROM SKILLCODES WHERE CATEGORY = 'FRONT END') > 0  AND SKILL_CODE & (SELECT SUM(CODE) FROM SKILLCODES WHERE NAME = 'PYTHON') > 0 THEN 'A'
