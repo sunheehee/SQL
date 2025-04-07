@@ -15,7 +15,7 @@ END
 - 일치하는 값이 없으며 ELSE에 해당하는 result값 반환
 - ELSE도 없으면 NULL반환
 
-**#1 CASE WHEN**
+**#2 CASE WHEN**
 ```MYSQL
 CASE 
     WHEN 조건 THEN result
@@ -95,7 +95,7 @@ SELECT(1/0, 'YES')
 ```
 
 ## NULLIF(expr1, expr2)
-#### expr1 = expr2 이면 NULL 아니면 expr1 반환환
+#### expr1 = expr2 이면 NULL 아니면 expr1 반환
 
 ```MYSQL
 SELECT NULLIF(1,1) #results: NULL
@@ -153,7 +153,7 @@ SELECT .01 <> '0.01'
 
  ### 💡 BETWEEN
  `expr BETWEEN min AND max`
- #### expr이 min보다 크거나 같고, max보다 작거나 같으면 1 반환, 그렇지 않으면 0 반환 
+ #### expr이 min보다 크거나 같고, max보다 작거나 같으면 1 반환 OR 0
 
  ```mysql
  SELECT 2 BETWEEN 3 AND 1;
@@ -187,7 +187,7 @@ WHERE event_time BETWEEN
 ```
 **🫧정리**
 
-CAST()를 이용해서 비교하고자하는 입력값을 기존 테이블의 형식에 맞추어 변환시키면 오류 혹은 잘못된 결과출력없이 잘 비교할 수 있음. 
+CAST()를 이용해서 비교하고자하는 입력값을 기존 테이블의 형식에 맞추어 변환시키면 오류 혹은 잘못된 결과 출력없이 잘 비교할 수 있음. 
 
 ---
 
@@ -302,7 +302,7 @@ SELECT INTERVAL(22, 23, 30, 44, 200);
 - N이 NULL이면 -1
 - 모든 인자는 정수 처리됨
 
-    ⚠️오름차순 형태로 정렬되어있어야 정상작동함.
+⚠️오름차순 형태로 정렬되어있어야 정상작동함.
 
 ---
 
