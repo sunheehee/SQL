@@ -71,6 +71,6 @@ WHERE referee_id <> 2 OR referee_id IS NULL;
 
 그리고 NULL을 찾으려면 <>로는 찾을 수 없기 때문에, ISNULL 조건을 추가해줘야 한다.
 
-smooth~하게 풀엇자나 한 잔 해~
+smooth하게 풀엇자나 한 잔 해~
 
 ![alt text](<../image/오렌지쥬스 핑구.jpg>)
