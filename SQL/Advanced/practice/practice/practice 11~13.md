@@ -108,6 +108,7 @@ LEFT JOIN
 GROUP BY TC.HOUR
 ORDER BY TC.HOUR;
 ```
+![alt text](../image/입양시각구하기.png)
 
 ## 🌱배운점
 
