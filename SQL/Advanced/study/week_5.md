@@ -120,7 +120,7 @@ SELECT * FROM cte;
 ```
 -  10번 이상 반복되면 mysql자동 중단됨
 
-✨ `max_execution_time`을 이욯새 너무 오래 걸리는 쿼리는 자동으로 정해진 시간 후 종료시킬 수 있다.
+✨ `max_execution_time`을 이용해 너무 오래 걸리는 쿼리는 자동으로 정해진 시간 후 종료시킬 수 있다.
 ```mysql
 SET max_execution_time = 1000;
 
@@ -195,7 +195,7 @@ SELECT * FROM cte;
 
 ex: 0,1,1,2,3,5,8 ...
 
-따라서 자귀 쿼리에서 현재값과 이전값을 계속 저장하면서 이를 이용해 피보나치 수열을 만들 수 있다. 
+따라서 재재귀 쿼리에서 현재값과 이전값을 계속 저장하면서 이를 이용해 피보나치 수열을 만들 수 있다. 
 
 ```MYSQL
 WITH RECURSIVE fibonacci (n,fib_n, next_fib_n) AS(
