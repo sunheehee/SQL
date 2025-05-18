@@ -28,8 +28,7 @@ ORDER BY a.name;
 
 3️⃣ 2차 필터링 한 테이블과 athletes테이블과 조인해서 이름 출력
 ```
-
-![alt text](<../image/WEEK_7 #1.png>)
+![alt text](../image/문제1번정답.png)
 
 ### 📝문제 접근 흐름
 
@@ -52,7 +51,7 @@ ORDER BY a.name;
 
 [필요한 변수들의 연결 구조 정리]
 
-![alt text](<../image/#1. 테이블간연결구조.png>)
+![alt text](../image/테이블간연결구조.png)
 
 ## 배운 점
 
@@ -107,7 +106,7 @@ ORDER BY order_month;
 
     ➡️ 컬럼 설명을 꼭꼭 잘 숙지하자~~!!^^
 
-![alt text](<../image/#2. 온라인 쇼핑몰의 월별 매출액 집계.png>)
+![alt text](<../image/7주차 온라인 쇼핑몰의 월별 매출액 집계.png>)
 
 
 ### 📝문제 접근 흐름
@@ -169,7 +168,7 @@ ORDER BY user_a_id, user_b_id, user_c_id;
 
 ➡️ A < B < C 조건도 충족하도록
 
-![alt text](<../image/#3. 세명이 서로 친구인 관계 찾기 정답.png>)
+![alt text](<../image/7주차3. 세명이 서로 친구인 관계 찾기 정답.png>)
 
 
 ## 느낀점
